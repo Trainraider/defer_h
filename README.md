@@ -149,8 +149,8 @@ nonlocal lifetime: use errdefer
 
 Although the performance impact is small, you may consider using this library
 to quickly prototype working cleanup logic. Then, you might later revisit your
-functions and write the tradional and leaner goto cleanup blocks, using the
-defer and errdefer labels to guide you in writing accurate and safe manual
+functions and write the traditional and leaner goto cleanup blocks, using the
+defer and errdefer labels to give you a clear mental model in writing accurate and safe manual
 cleanup code that mirrors the defer version.
 
 If you're not overriding any keywords and have to pick the right versions to use:
