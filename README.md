@@ -35,6 +35,7 @@ Here's why:
 * 3rd party macros will interact correctly with defer logic when keywords are
 overridden.
 * It maintains behavior parity between GNUC and C99 uses of this library.
+* Zlib compiles and passes it's own tests with its keywords globally overwritten. (Try it yourself with `make zlib-test`!)
 
 Consider an opaque third‑party macro that wraps user code which includes deferred code and `break`, in which the macro internally uses a for loop. That macro has no idea this library exists, so it will naturally use the built‑in keywords rather than any custom RETURN/BREAK/CONTINUE variants.
 If this library didn’t redefine the keywords, any defer scopes inside such a macro would be unaware of the internal loop and clean up too much deferred functions immediately, all the way to the next known loop/switch statement. A break inside the macro would bypass my cleanup logic, and scope‑based cleanup would get out of sync.
