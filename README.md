@@ -28,7 +28,7 @@ void example() S_
     
     // Your code here - resources cleaned up automatically
     if (error_condition) {
-        return;  // defer runs: buffer freed, file closed
+        returnerr;  // defer runs: buffer freed, file closed
     }
     
     // Normal exit - defer still runs: buffer freed, file closed
