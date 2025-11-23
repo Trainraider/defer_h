@@ -341,7 +341,7 @@ make run-test-gnu
 # With macro stack
 make run-test-c99-macro
 ```
-* Tested with GCC, clang, and tcc, using fsanitize=undefined,address  
+* Tested with GCC, clang, TCC, and PCC, using fsanitize=undefined,address  
 * MSVC and other C99+ compilers are expected to work fine.  
 
 The test suite includes 42 tests covering:
