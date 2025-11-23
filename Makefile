@@ -3,10 +3,10 @@
 .PHONY: run-test-gnu run-test-c99 run-test-c99-macro
 .PHONY: zlib zlib-test run-test-zlib-keyword-injection
 
-CC = clang
-CFLAGS = -std=gnu11
-CFLAGS_C99 = -std=c99
-CFLAGS_TEST = -fsanitize=undefined,address -g -O0
+CC ?= clang
+CFLAGS ?= -std=gnu11
+CFLAGS_C99 ?= -std=c99
+CFLAGS_TEST ?= -fsanitize=undefined,address -g -O0
 
 # Output directories
 DIST = dist
