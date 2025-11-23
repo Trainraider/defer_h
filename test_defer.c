@@ -9,25 +9,21 @@
 #ifdef __clang__
 #pragma clang diagnostic ignored "-Wstrict-prototypes"
 #endif
-#ifdef __GNUC__
+#if defined(__GNUC__) && !defined(__PCC__)
 #define FALLTHROUGH __attribute__((fallthrough))
 #else
 #define FALLTHROUGH
 #endif
-#if defined (__GNUC__) && !defined(USE_C99_DEFER)
+#if defined (__GNUC__) && !defined(USE_C99_DEFER) && !defined(__PCC__)
 #undef USE_MACRO_STACK
 #endif
 #ifdef USE_MACRO_STACK
 #include "macro_stack.h"
-#define USING_MACRO_STACK "enabled"
 #else
-#define USING_MACRO_STACK "disabled"
 #endif // USE_MACRO_STACK
 #include "defer.h"
 #ifndef USE_C99_DEFER
-#define CSTD "gnu11+"
 #else
-#define CSTD "c99+"
 #endif // USE_C99_DEFER
 
 // Test harness: non-aborting assert and lightweight runner
@@ -1490,7 +1486,9 @@ int main() {
 
     if (fails) {
         printf("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
-        printf("  defer.h Tests (%s, macro_stack: %s)\n", CSTD, USING_MACRO_STACK);
+        printf("  defer.h Tests (%s, macro_stack: %s)\n", \
+            USING_GNUC_DEFER ? "gnu11+" : "c99+", \
+            USING_MACRO_STACK ? "enabled" : "disabled");
         printf("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
         printf("  ✗ %d/%d failed\n\n", fails, __test_count);
         printf("Failures:\n");
@@ -1502,7 +1500,10 @@ int main() {
         printf("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
     } else {
         printf("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
-        printf("  defer.h: ✓ %d tests passed (%s, macro_stack: %s)\n", __test_count, CSTD, USING_MACRO_STACK);
+        printf("  defer.h: ✓ %d tests passed (%s, macro_stack: %s)\n", \
+             __test_count, \
+             USING_GNUC_DEFER ? "gnu11+" : "c99+", \
+             USING_MACRO_STACK ? "enabled" : "disabled");
         printf("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
     }
 

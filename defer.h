@@ -15,12 +15,34 @@
 #endif
 
 #ifdef __COUNTER__
-  #define _UNIQUER __COUNTER__
+  #ifndef __PCC__ // I'm starting to understand why the BSDs dropped PCC...
+    #define _UNIQUER __COUNTER__
+  #else
+    #define _UNIQUER __LINE__
+  #endif
 #else
   #define _UNIQUER __LINE__
 #endif
 
-//#define USE_C99_DEFER
+#ifdef __has_attribute
+  #if !__has_attribute(cleanup)
+      #define USE_C99_DEFER
+  #endif
+#else
+  #define USE_C99_DEFER
+#endif
+
+#ifdef USE_C99_DEFER
+  #define USING_GNUC_DEFER 0
+  #ifdef SCOPE_MACRO_STACK_AVAILABLE
+    #define USING_MACRO_STACK 1
+  #else
+    #define USING_MACRO_STACK 0
+  #endif
+#else
+  #define USING_GNUC_DEFER 1
+  #define USING_MACRO_STACK 0
+#endif
 
 #if defined (__GNUC__) && !defined(USE_C99_DEFER)
 
@@ -187,6 +209,7 @@ static inline _dfr_DeferNode* link_defer_node(_dfr_DeferNode** old_head, _dfr_De
     return ret;
 }
 
+#ifndef __PCC__
 // This macro has carefully been made unbraced if safe, as far as macro hygiene
 // goes anyways. But the lifetime of the node ends early if used in an if
 // statement without a proper S_ _S scope. It'll probably work, but it's undefined
@@ -202,6 +225,20 @@ static inline _dfr_DeferNode* link_defer_node(_dfr_DeferNode** old_head, _dfr_De
             .arg = &(var) \
         } \
     )
+#else // defined(__PCC__)
+// Not unbraced if safe in PCC
+// PCC won't safely take the address of a variable during its initialization
+#define _dfr_defer_impl(cleanup_func, var, err, unique) \
+    _dfr_DeferNode _CAT(node, unique) = \
+        (_dfr_DeferNode){ \
+            .next = _dfr_ctx_.head, \
+            .is_err = err, \
+            .func = cleanup_func, \
+            .arg = &(var) \
+        }; \
+        _dfr_ctx_.head = &_CAT(node, unique)
+
+#endif // __PCC__
 
 #define _dfr_defer(cleanup_func, var, err) \
     _dfr_defer_impl(cleanup_func, var, err, _UNIQUER)
